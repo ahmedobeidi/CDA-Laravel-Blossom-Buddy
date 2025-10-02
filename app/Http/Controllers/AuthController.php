@@ -33,12 +33,43 @@ class AuthController extends Controller
             'password' => Hash::make($validatedData['password'])
         ]);
 
-        $token = $user->createToken('access_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'User registered successfully',
             'access_token' => $token,
             'token_type' => 'Bearer'
         ], 201);
+    }
+
+    public function login(Request $request): JsonResponse
+    {
+        try {
+            $validatedData = $request->validate([
+                'email' => 'required|email',
+                'password' => 'required|string'
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        }
+
+        $user = User::where('email', $validatedData['email'])->first();
+
+        if (!$user || !Hash::check($validatedData['password'], $user->password)) {
+            return response()->json([
+                'message' => 'Invalid credentials.'
+            ], 401);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Loged in successfully',
+            'access_token' => $token,
+            'token-type' => 'Bearer'
+        ], 200);
     }
 }
