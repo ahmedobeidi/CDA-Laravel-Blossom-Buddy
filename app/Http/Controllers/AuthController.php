@@ -17,7 +17,7 @@ class AuthController extends Controller
                 'firstName' => 'required|string|max:55',
                 'lastName' => 'required|string|max:55',
                 'email' => 'required|email|unique:users',
-                'password' => 'required|string|min:8'
+                'password' => 'required|string|min:8|confirmed',
             ]);
         } catch (ValidationException $e) {
             return response()->json([
