@@ -47,4 +47,20 @@ class PlantController extends Controller
 
         return response()->json($plant, 200);
     }
+
+    public function destroy(int $id): JsonResponse 
+    {
+        $plant = Plant::find($id);
+
+        if (!$plant)
+        {
+            return response()->json([
+                "message" => "Plant not found",
+            ], 404);
+        }
+
+        $plant->delete();
+
+        return response()->json(null, 204);
+    }
 }
