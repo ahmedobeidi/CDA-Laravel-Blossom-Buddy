@@ -33,4 +33,18 @@ class PlantController extends Controller
 
         return response()->json($plant, 201);
     }
+
+    public function show(string $common_name): JsonResponse
+    {
+        $plant = Plant::where('common_name', $common_name)->first();
+
+        if (!$plant) 
+        {
+            return response()->json([
+                'message' => 'Plant not found'
+            ], 404);
+        }
+
+        return response()->json($plant, 200);
+    }
 }

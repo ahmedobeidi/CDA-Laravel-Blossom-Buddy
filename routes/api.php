@@ -16,3 +16,5 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/plants', [PlantController::class, 'index']);
 
 Route::post('/plants', [PlantController::class, 'store']);
+
+Route::get('/plants/{name}', [PlantController::class, 'show']);
