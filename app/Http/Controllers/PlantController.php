@@ -47,21 +47,6 @@ class PlantController extends Controller
         return response()->json($plant, 201);
     }
 
-    public function destroy(int $id): JsonResponse
-    {
-        $plant = Plant::find($id);
-
-        if (!$plant) {
-            return response()->json([
-                "message" => "Plant not found",
-            ], 404);
-        }
-
-        $plant->delete();
-
-        return response()->json(null, 204);
-    }
-
     public function update(Request $request, int $id): JsonResponse
     {
         try {
@@ -98,5 +83,20 @@ class PlantController extends Controller
             'message' => 'Resource updated successfully',
             'date' => $plant,
         ], 200);
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $plant = Plant::find($id);
+
+        if (!$plant) {
+            return response()->json([
+                "message" => "Plant not found",
+            ], 404);
+        }
+
+        $plant->delete();
+
+        return response()->json(null, 204);
     }
 }

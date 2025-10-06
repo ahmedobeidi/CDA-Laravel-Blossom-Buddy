@@ -47,4 +47,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function plants()
+    {
+        return $this->belongsToMany(Plant::class, 'user_plant') // <-- specify pivot table
+                ->using(UserPlant::class)                  // optional custom pivot model
+                ->withPivot('city')
+                ->withTimestamps();
+    }
 }

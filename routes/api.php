@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PlantController;
+use App\Http\Controllers\UserPlantController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -24,4 +25,4 @@ Route::patch('/plants/{id}', [PlantController::class, 'update']);
 Route::delete('/plants/{id}', [PlantController::class, 'destroy']);
 
 // User_Plant
-// Route::post('')
+Route::post('/user/plants', [UserPlantController::class, 'store'])->middleware('auth:sanctum');
