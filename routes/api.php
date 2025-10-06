@@ -16,11 +16,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::post('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
 
 
-// Plants
+// Plant
 Route::get('/plants', [PlantController::class, 'index']);
 Route::get('/plants/{name}', [PlantController::class, 'show']);
 Route::post('/plants', [PlantController::class, 'store']);
 Route::patch('/plants/{id}', [PlantController::class, 'update']);
 Route::delete('/plants/{id}', [PlantController::class, 'destroy']);
 
-// User
+// User_Plant
+// Route::post('')
