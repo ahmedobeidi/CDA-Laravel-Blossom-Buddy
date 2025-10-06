@@ -25,7 +25,7 @@ class AuthController extends Controller
                 'errors' => $e->errors(),
             ], 422);
         }
-        
+
         $validatedData['password'] = Hash::make($validatedData['password']);
 
         $user = User::create($validatedData);
@@ -72,7 +72,9 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        /** @var \Laravel\Sanctum\PersonalAccessToken $token */
+        $token = $request->user()->currentAccessToken();
+        $token->delete();
 
         return response()->json(['message' => 'Logged out successfully'], 200);
     }

@@ -13,11 +13,14 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-Route::post('/me', [AuthController::class, 'me'])->middleware('auth:sanctum'); // did not undrstand it
+Route::post('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
 
 
 // Plants
 Route::get('/plants', [PlantController::class, 'index']);
-Route::post('/plants', [PlantController::class, 'store']);
 Route::get('/plants/{name}', [PlantController::class, 'show']);
+Route::post('/plants', [PlantController::class, 'store']);
+Route::patch('/plants/{id}', [PlantController::class, 'update']);
 Route::delete('/plants/{id}', [PlantController::class, 'destroy']);
+
+// User
