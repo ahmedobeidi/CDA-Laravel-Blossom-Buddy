@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Plant;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -46,5 +45,14 @@ class UserPlantController extends Controller
                 'unit'  => $validatedPlantData['watering_general_benchmark']['unit'],
             ]
         ], 201);
+    }
+
+    public function show(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $plants = $user->plants;
+
+        return response()->json($plants, 200);
     }
 }
