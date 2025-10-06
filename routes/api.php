@@ -25,5 +25,6 @@ Route::patch('/plants/{id}', [PlantController::class, 'update']);
 Route::delete('/plants/{id}', [PlantController::class, 'destroy']);
 
 // User_Plant
-Route::post('/user/plants', [UserPlantController::class, 'store'])->middleware('auth:sanctum');
 Route::get('/user/plants', [UserPlantController::class, 'show'])->middleware('auth:sanctum');
+Route::post('/user/plants', [UserPlantController::class, 'store'])->middleware('auth:sanctum');
+Route::delete('/user/plants/{id}', [UserPlantController::class, 'destroy'])->middleware('auth:sanctum');

@@ -9,6 +9,16 @@ use Illuminate\Validation\ValidationException;
 
 class UserPlantController extends Controller
 {
+
+    public function show(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $plants = $user->plants;
+
+        return response()->json($plants, 200);
+    }
+
     public function store(Request $request): JsonResponse
     {
         try {
@@ -47,12 +57,21 @@ class UserPlantController extends Controller
         ], 201);
     }
 
-    public function show(Request $request): JsonResponse
+    public function destroy(Request $request, int $id): JsonResponse
     {
+        /**
+         * @var \App\Models\User $user
+         */
         $user = $request->user();
 
-        $plants = $user->plants;
+        $relation = $user->plants()->wherePivot('id', $id)->first();
 
-        return response()->json($plants, 200);
+        if (!$relation) {
+            return response()->json(['error' => 'Plant not found in user'], 404);
+        }
+
+        $user->plants()->wherePivot('id', $id)->detach();
+
+        return response()->json(['message' => 'Plant deleted from user successfully'], 200);
     }
 }
