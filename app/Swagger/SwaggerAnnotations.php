@@ -16,6 +16,13 @@ namespace App\Swagger;
  *     url=L5_SWAGGER_CONST_HOST,
  *     description="Local server"
  * )
+ * 
+ * @OA\SecurityScheme(
+ *     type="http",
+ *     securityScheme="bearerAuth",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
+ * )
  */
 class SwaggerAnnotations
 {
