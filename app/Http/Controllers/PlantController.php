@@ -9,6 +9,21 @@ use Illuminate\Validation\ValidationException;
 
 class PlantController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/plants",
+     *     summary="Get all plants",
+     *     tags={"Plants"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(ref="#/components/schemas/Plant")
+     *         )
+     *     )
+     * )
+     */
     public function index(): JsonResponse
     {
         return response()->json(Plant::all(), 200);

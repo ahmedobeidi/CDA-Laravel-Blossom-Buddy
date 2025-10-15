@@ -1,0 +1,67 @@
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "/api/plants": {
+            "get": {
+                "tags": [
+                    "Plants"
+                ],
+                "summary": "Get all plants",
+                "operationId": "6e2a3a91967b1e364c87b755cd5152f6",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Plant"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Plant": {
+                "title": "Plant",
+                "required": [
+                    "id",
+                    "common_name",
+                    "watering_general_benchmark"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "common_name": {
+                        "type": "string"
+                    },
+                    "watering_general_benchmark": {
+                        "properties": {
+                            "value": {
+                                "type": "string"
+                            },
+                            "unit": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Plants",
+            "description": "Plants"
+        }
+    ]
+}
