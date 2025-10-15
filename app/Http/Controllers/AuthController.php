@@ -8,6 +8,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * @OA\Tag(
+ *     name="Authentication",
+ *     description="Endpoints for user registration, login, logout, and get current user"
+ * )
+ */
 class AuthController extends Controller
 {
     /**

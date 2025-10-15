@@ -7,6 +7,12 @@ use App\Models\Plant;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
+/**
+ * @OA\Tag(
+ *     name="Plants",
+ *     description="Endpoints for managing global plant resources"
+ * )
+ */
 class PlantController extends Controller
 {
     /**
