@@ -5,10 +5,10 @@ namespace App\Swagger;
 /**
  * @OA\Info(
  *     version="1.0.0",
- *     title="Plant API",
- *     description="API documentation for my Plant project",
+ *     title="Blossom Buddy API",
+ *     description="API documentation for Blossom Buddy",
  *     @OA\Contact(
- *         email="your-email@example.com"
+ *         email="developer@example.com"
  *     )
  * )
  *
