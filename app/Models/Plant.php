@@ -23,11 +23,17 @@ use Illuminate\Database\Eloquent\Model;
 class Plant extends Model
 {
    protected $fillable = [
+      "api_id", 
       "common_name",
-      "watering_general_benchmark"
+      'scientific_name',
+      'family',
+      'origin',
+      'default_image',
+      "watering_general_benchmark",
    ];
 
    protected $casts = [
         'watering_general_benchmark' => 'array', // <--- important
+        'default_image' => 'array'
     ];
 }

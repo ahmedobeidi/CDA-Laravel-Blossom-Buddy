@@ -37,8 +37,7 @@ class PlantController extends Controller
     public function index(): JsonResponse
     {
         return response()->json([
-            'message' => 'Successful',
-            Plant::all()
+            'data' => Plant::all()
         ], 200);
     }
 
