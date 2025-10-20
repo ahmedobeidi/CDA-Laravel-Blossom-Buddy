@@ -34,5 +34,10 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    
+    'perenual' => [
+        'base_url' => env('PERENUAL_BASE_URL'),
+        'key' => env('PERENUAL_ACCESS_KEY'),
+    ],
 
 ];
