@@ -29,11 +29,18 @@ class Plant extends Model
       'family',
       'origin',
       'default_image',
-      "watering_general_benchmark",
+      'watering_general_benchmark'
    ];
 
    protected $casts = [
-        'watering_general_benchmark' => 'array', // <--- important
-        'default_image' => 'array'
+        'scientific_name' => 'array',
+        'origin' => 'array',
+        'default_image' => 'array',
+        'watering_general_benchmark' => 'array',
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
     ];
 }

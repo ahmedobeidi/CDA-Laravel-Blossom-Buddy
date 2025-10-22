@@ -36,7 +36,6 @@ return [
     ],
     
     'perenual' => [
-        'base_url' => env('PERENUAL_BASE_URL'),
         'key' => env('PERENUAL_ACCESS_KEY'),
     ],
 

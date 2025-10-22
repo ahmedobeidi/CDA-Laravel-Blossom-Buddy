@@ -16,7 +16,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
 
-// Plant
+// Plants
+// Sync API must come first
+Route::get('/plants/sync', [PlantController::class, 'syncPlantsFromAPI']);
+
 Route::get('/plants', [PlantController::class, 'index']);
 Route::get('/plants/{common_name}', [PlantController::class, 'show']);
 Route::post('/plants', [PlantController::class, 'store']);

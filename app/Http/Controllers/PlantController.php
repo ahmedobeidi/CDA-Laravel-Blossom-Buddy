@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\PlantServiceInterface;
 use Illuminate\Http\JsonResponse;
 use App\Models\Plant;
 use Illuminate\Http\Request;
@@ -252,5 +253,15 @@ class PlantController extends Controller
         $plant->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function syncPlantsFromAPI(PlantServiceInterface $plantService): JsonResponse
+    {
+        $stats = $plantService->fetchAndStorePlants(3);
+
+        return response()->json([
+            'message' => 'Plants sync completed',
+            'stats' => $stats
+        ]);
     }
 }
