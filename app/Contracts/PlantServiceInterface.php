@@ -10,5 +10,5 @@ interface PlantServiceInterface
      * @param int|null $maxRequests Optional limit of API requests
      * @return array Summary of synced plants
      */
-    public function fetchAndStorePlants(?int $maxRequests = null): array;
+    public function fetchAndStorePlants(int $maxRequests): array;
 }

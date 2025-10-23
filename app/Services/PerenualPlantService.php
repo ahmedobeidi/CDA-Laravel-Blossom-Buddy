@@ -18,12 +18,8 @@ class PerenualPlantService implements PlantServiceInterface
         $this->apiKey = config('services.perenual.key');
     }
 
-    public function fetchAndStorePlants(?int $maxRequests = null): array
+    public function fetchAndStorePlants(int $maxRequests): array
     {
-        if ($maxRequests === null) {
-            $maxRequests = 1;
-        }
-
         $stats = [
             'processed' => 0,
             'created' => 0,
@@ -32,7 +28,7 @@ class PerenualPlantService implements PlantServiceInterface
         ];
 
         for ($i = 1; $i <= $maxRequests; $i++) {
-            $response = Http::timeout(30)->get("{$this->apiUrl}/{$i}", [
+            $response = Http::timeout(200)->get("{$this->apiUrl}/{$i}", [
                 'key' => $this->apiKey
             ]);
 
@@ -55,11 +51,11 @@ class PerenualPlantService implements PlantServiceInterface
             $plantData = [
                 'api_id' => $data['id'],
                 'common_name' => $data['common_name'] ?? 'Unknown',
-                'scientific_name' => is_array($data['scientific_name']) ? implode(', ', $data['scientific_name']) : $data['scientific_name'],
+                'scientific_name' => $data['scientific_name'] ?? [],
                 'family' => $data['family'] ?? null,
-                'origin' => is_array($data['origin']) ? implode(', ', $data['origin']) : $data['origin'],
-                'default_image' => is_array($data['default_image']) ? implode(', ', $data['default_image']) : $data['default_image'],
-                'watering_general_benchmark' => is_array($data['watering_general_benchmark']) ? implode(', ', $data['watering_general_benchmark']) : $data['watering_general_benchmark'],
+                'origin' => $data['origin'] ?? [],
+                'default_image' => $data['default_image'] ?? [],
+                'watering_general_benchmark' => $data['watering_general_benchmark'] ?? ['value' => null, 'unit' => null],
             ];
 
             try {
@@ -73,6 +69,8 @@ class PerenualPlantService implements PlantServiceInterface
                 } else {
                     $stats['updated']++;
                 }
+
+                sleep(1);
             } catch (\Exception $e) {
                 $stats['errors']++;
                 Log::error("Failed to save plant ID {$i}: " . $e->getMessage());

@@ -17,8 +17,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
 Route::get('/me', [AuthController::class, 'me'])->middleware('auth:sanctum');
 
 // Plants
-// Sync API must come first
-Route::get('/plants/sync', [PlantController::class, 'syncPlantsFromAPI']);
+// Fetch API must come first
+Route::get('/plants/fetch', [PlantController::class, 'fetchPlantsFromAPI']);
 
 Route::get('/plants', [PlantController::class, 'index']);
 Route::get('/plants/{common_name}', [PlantController::class, 'show']);

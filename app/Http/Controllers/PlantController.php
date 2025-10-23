@@ -255,12 +255,14 @@ class PlantController extends Controller
         return response()->json(null, 204);
     }
 
-    public function syncPlantsFromAPI(PlantServiceInterface $plantService): JsonResponse
+    public function fetchPlantsFromAPI(Request $request, PlantServiceInterface $plantService): JsonResponse
     {
-        $stats = $plantService->fetchAndStorePlants(3);
+        $max = $request->query('max', 100); 
+
+        $stats = $plantService->fetchAndStorePlants((int) $max);
 
         return response()->json([
-            'message' => 'Plants sync completed',
+            'message' => 'Plants fetched successfully',
             'stats' => $stats
         ]);
     }
