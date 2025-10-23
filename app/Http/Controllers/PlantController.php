@@ -254,16 +254,4 @@ class PlantController extends Controller
 
         return response()->json(null, 204);
     }
-
-    public function fetchPlantsFromAPI(Request $request, PlantServiceInterface $plantService): JsonResponse
-    {
-        $max = $request->query('max', 100); 
-
-        $stats = $plantService->fetchAndStorePlants((int) $max);
-
-        return response()->json([
-            'message' => 'Plants fetched successfully',
-            'stats' => $stats
-        ]);
-    }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Contracts\PlantServiceInterface;
 use Illuminate\Console\Command;
-use App\Services\PerenualPlantService;
 
 class FetchPlantsCommand extends Command
 {
@@ -24,7 +24,7 @@ class FetchPlantsCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(PerenualPlantService $plantService)
+    public function handle(PlantServiceInterface $plantService)
     {
         $maxRequests = (int) $this->option('max');
 

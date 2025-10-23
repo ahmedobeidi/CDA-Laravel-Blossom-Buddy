@@ -96,13 +96,8 @@ class UserPlantController extends Controller
     public function store(Request $request): JsonResponse
     {
         try {
-            $validatedPlantData = $request->validate([
-                'common_name' => 'required|string|max:255',
-                'watering_general_benchmark' => 'required|array',
-                'watering_general_benchmark.value' => 'required|string',
-                'watering_general_benchmark.unit' => 'required|string',
-            ]);
-            $validatedUserPlantData = $request->validate([
+            $validatedData = $request->validate([
+                'plant_name' => 'required|string|max:255',
                 'city' => 'required|string|max:255',
             ]);
         } catch (ValidationException $e) {
@@ -112,21 +107,22 @@ class UserPlantController extends Controller
             ], 422);
         }
 
+        $plant = Plant::where('common_name', 'LIKE', '%' . $validatedData['plant_name'] . '%')->first();
+
+        if (!$plant) {
+            return response()->json([
+                'message' => 'Plant not found'
+            ], 404);
+        }
+
         $user = $request->user();
-        $plant = Plant::create($validatedPlantData);
 
         $user->plants()->attach($plant->id, [
-            'city' => $validatedUserPlantData['city'],
+            'city' => $validatedData['city'],
         ]);
 
         return response()->json([
-            'message' => 'User plant added successfully',
-            'data' => [
-                'common_name' => $validatedPlantData['common_name'],
-                'city' => $validatedUserPlantData['city'],
-                'value' => $validatedPlantData['watering_general_benchmark']['value'],
-                'unit'  => $validatedPlantData['watering_general_benchmark']['unit'],
-            ]
+            'message' => 'User plant added successfully'
         ], 201);
     }
 
