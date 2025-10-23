@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\WeatherServiceInterface;
 use App\Models\Plant;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -93,7 +94,7 @@ class UserPlantController extends Controller
      *     )
      * )
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, WeatherServiceInterface $weatherService): JsonResponse
     {
         try {
             $validatedData = $request->validate([
@@ -115,15 +116,22 @@ class UserPlantController extends Controller
             ], 404);
         }
 
-        $user = $request->user();
+        $forecastDays = $weatherService->determineForecastDays($plant->watering_general_benchmark);
 
-        $user->plants()->attach($plant->id, [
-            'city' => $validatedData['city'],
-        ]);
+        $weatherData = $weatherService->getForecast($validatedData['city'], $forecastDays);
 
-        return response()->json([
-            'message' => 'User plant added successfully'
-        ], 201);
+        // DELETE this and uncomment the code after it and do the logic for cache here and in WeatherapiService and merge the two APIs
+        return response()->json($weatherData);
+
+        // $user = $request->user();
+
+        // $user->plants()->attach($plant->id, [
+        //     'city' => $validatedData['city'],
+        // ]);
+
+        // return response()->json([
+        //     'message' => 'User plant added successfully'
+        // ], 201);
     }
 
     /**

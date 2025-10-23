@@ -36,7 +36,14 @@ return [
     ],
     
     'perenual' => [
-        'key' => env('PERENUAL_ACCESS_KEY'),
+        'key' => env('PERENUAL_API_KEY'),
+        'base_url' => 'https://perenual.com/api/v2/species/details'
     ],
 
+    'weatherapi' => [
+        'key' => env('WEATHERAPI_API_KEY'),
+        'base_url' => 'https://api.weatherapi.com/v1',
+        'cache_duration' => 120, // 2 heures en minutes
+        'max_forecast_days' => 5
+    ]
 ];

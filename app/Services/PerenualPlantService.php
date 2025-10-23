@@ -14,7 +14,7 @@ class PerenualPlantService implements PlantServiceInterface
 
     public function __construct()
     {
-        $this->apiUrl = 'https://perenual.com/api/v2/species/details';
+        $this->apiUrl = config('services.perenual.base_url');
         $this->apiKey = config('services.perenual.key');
     }
 
@@ -28,7 +28,7 @@ class PerenualPlantService implements PlantServiceInterface
         ];
 
         for ($i = 1; $i <= $maxRequests; $i++) {
-            $response = Http::timeout(200)->get("{$this->apiUrl}/{$i}", [
+            $response = Http::timeout(30)->get("{$this->apiUrl}/{$i}", [
                 'key' => $this->apiKey
             ]);
 
