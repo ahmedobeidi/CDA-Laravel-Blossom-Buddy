@@ -46,29 +46,66 @@ class WeatherapiService implements WeatherServiceInterface
 
             if (!$response->successful()) {
                 Log::error("Error Weather API for {$city}, Status : {$response->status()}");
-                return [
-                    'error' => "Failed to fetch weather data for {$city}",
-                    'status' => $response->status()
-                ];
+                throw new \Exception("Failed to fetch weather data for {$city}");
             }
 
             $weatherData = $response->json();
 
             if (!$weatherData || !isset($weatherData['forecast']['forecastday'])) {
                 Log::warning("Empty or invalid data returned");
-                return [
-                    'error' => "Empty or invalid data returned"
-                ];
+                throw new \Exception("Empty or invalid data returned");
             }
 
-            return $weatherData;
+            $processedData = [
+                'city' => $city,
+                'days' => $days,
+                'forecast' => $weatherData['forecast']['forecastday'],
+                'daily_humidity' => $this->calculateDailyAverageHumidity($weatherData['forecast']['forecastday']),
+                'retrieved_at' => now()->toISOString()
+            ];
 
+            // Mettre en cache pour 2 heures
+            Cache::put($cacheKey, $processedData, now()->addMinutes($this->cacheDuration));
+
+            Log::info("Weather data retrieved and cached for {$city}");
+
+            return $processedData;
         } catch (\Exception $e) {
             Log::error("Error retrieving weather for {$city}: {$e->getMessage()}");
-            return [
-                'error' => "Error retrieving weather for {$city}"
-            ];
+            throw $e;
         }
+    }
+
+    public function calculateDailyAverageHumidity(array $forecastData): array
+    {
+        $dailyHumidity = [];
+
+        foreach ($forecastData as $day) {
+            $date = $day['date'];
+            $hourlyData = $day['hour'] ?? [];
+
+            if (empty($hourlyData)) {
+                // Si pas de données horaires, utiliser la moyenne du jour si disponible
+                $dailyHumidity[$date] = $day['day']['avghumidity'] ?? null;
+                continue;
+            }
+
+            // Calculer la moyenne des humidités horaires
+            $totalHumidity = 0;
+            $validHours = 0;
+
+            foreach ($hourlyData as $hour) {
+                if (isset($hour['humidity'])) {
+                    $totalHumidity += $hour['humidity'];
+                    $validHours++;
+                }
+            }
+
+            $averageHumidity = $validHours > 0 ? round($totalHumidity / $validHours, 1) : null;
+            $dailyHumidity[$date] = $averageHumidity;
+        }
+
+        return $dailyHumidity;
     }
 
     public function determineForecastDays(array $wateringBenchmark): int
@@ -87,7 +124,7 @@ class WeatherapiService implements WeatherServiceInterface
 
         // Nettoyer la valeur (enlever les guillemets et espaces)
         $cleanValue = trim($value, '"');
-        
+
         // Gérer les cas comme "6-12", "7", etc.
         if (strpos($cleanValue, '-') !== false) {
             // Cas d'une plage comme "6-12"

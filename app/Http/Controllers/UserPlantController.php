@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\WateringCalculatorServiceInterface;
 use App\Contracts\WeatherServiceInterface;
 use App\Models\Plant;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -94,7 +97,7 @@ class UserPlantController extends Controller
      *     )
      * )
      */
-    public function store(Request $request, WeatherServiceInterface $weatherService): JsonResponse
+    public function store(Request $request, WeatherServiceInterface $weatherService, WateringCalculatorServiceInterface $wateringCalculatorService): JsonResponse
     {
         try {
             $validatedData = $request->validate([
@@ -108,7 +111,10 @@ class UserPlantController extends Controller
             ], 422);
         }
 
-        $plant = Plant::where('common_name', 'LIKE', '%' . $validatedData['plant_name'] . '%')->first();
+        $plantName = $validatedData['plant_name'];
+        $city = $validatedData['city'];
+
+        $plant = Plant::where('common_name', 'LIKE', '%' . $plantName . '%')->first();
 
         if (!$plant) {
             return response()->json([
@@ -116,22 +122,42 @@ class UserPlantController extends Controller
             ], 404);
         }
 
-        $forecastDays = $weatherService->determineForecastDays($plant->watering_general_benchmark);
+        $user = $request->user();
 
-        $weatherData = $weatherService->getForecast($validatedData['city'], $forecastDays);
+        $user->plants()->attach($plant->id, [
+            'city' => $city,
+        ]);
 
-        // DELETE this and uncomment the code after it and do the logic for cache here and in WeatherapiService and merge the two APIs
-        return response()->json($weatherData);
+        try {
+            $forecastDays = $weatherService->determineForecastDays($plant->watering_general_benchmark);
 
-        // $user = $request->user();
+            $weatherData = $weatherService->getForecast($city, $forecastDays);
 
-        // $user->plants()->attach($plant->id, [
-        //     'city' => $validatedData['city'],
-        // ]);
+            $wateringCalculation = $wateringCalculatorService->calculateNextWatering(
+                $plant->watering_general_benchmark,
+                $weatherData['daily_humidity']
+            );
 
-        // return response()->json([
-        //     'message' => 'User plant added successfully'
-        // ], 201);
+            return response()->json([
+                'message' => 'Plant added to user successfully',
+                'weather_info' => [
+                    'city' => $weatherData['city'],
+                    'days' => $weatherData['days'],
+                    'daily_humidity' => $weatherData['daily_humidity'],
+                    'retrieved_at' => $weatherData['retrieved_at']
+                ],
+                'watering_calculation' => $wateringCalculation
+            ], 200);
+            
+        } catch (\Exception $e) {
+            Log::error("Plant added to user successfully, but weather/watering calculation unavailable {$city}: " . $e->getMessage());
+
+            // La plante est déjà ajoutée, mais on informe que les calculs ne sont pas disponibles
+            return response()->json([
+                'message' => 'Plant added to user successfully, but weather/watering calculation unavailable',
+                'error' => 'Weather/watering calculation could not be completed: ' . $e->getMessage()
+            ], 200);
+        }
     }
 
     /**
