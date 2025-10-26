@@ -43,4 +43,14 @@ class Plant extends Model
         'created_at',
         'updated_at',
     ];
+    
+    public function getCommonName(): string
+    {
+        return $this->common_name;
+    }
+
+    public function setCommonName(string $common_name): void
+    {
+        $this->common_name = $common_name;
+    }
 }
